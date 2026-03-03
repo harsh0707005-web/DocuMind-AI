@@ -4,6 +4,7 @@ __pycache__/
 *$py.class
 *.so
 venv/
+.venv/
 .env
 *.egg-info/
 dist/
@@ -24,11 +25,17 @@ dist/
 .DS_Store
 Thumbs.db
 
-# FAISS index
-server/uploads/faiss_index.bin
-server/uploads/chunks.pkl
-server/uploads/*.pdf
-server/uploads/*.txt
+# Uploads & index files
+server/uploads/
+
+# Local DB fallback
+server/local_db.json
+
+# Debug files
+server/debug_*.py
+server/debug_*.txt
+server_output.txt
+-w
 
 # Logs
 *.log

@@ -9,15 +9,19 @@ from database import connect_db, close_db
 from routes.chat import router as chat_router
 from routes.documents import router as documents_router
 from routes.study import router as study_router
+from services.rag_service import rag_service
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifecycle: startup and shutdown."""
     await connect_db()
+    # Rebuild chunks from uploaded files if index is empty
+    await rag_service.rebuild_from_uploads()
     print("🧠 DocuMind AI Backend is ready!")
     print(f"📊 OpenAI: {'✅ Configured' if settings.OPENAI_API_KEY else '❌ Not set'}")
     print(f"🌟 Gemini: {'✅ Configured' if settings.GEMINI_API_KEY else '❌ Not set'}")
+    print(f"🚀 Groq:   {'✅ Configured' if settings.GROQ_API_KEY else '❌ Not set (FREE at console.groq.com/keys)'}")
     yield
     await close_db()
 
@@ -29,11 +33,11 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# CORS
+# CORS — allow all origins for local dev
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.CORS_ORIGINS,
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -64,7 +68,9 @@ async def health_check():
     return {
         "status": "healthy",
         "openai_configured": bool(settings.OPENAI_API_KEY),
-        "gemini_configured": bool(settings.GEMINI_API_KEY)
+        "gemini_configured": bool(settings.GEMINI_API_KEY),
+        "groq_configured": bool(settings.GROQ_API_KEY),
+        "chunks_loaded": rag_service.total_chunks
     }
 
 

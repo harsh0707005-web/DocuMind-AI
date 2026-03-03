@@ -79,10 +79,18 @@ export default function ChatWindow({
       const convs = await getConversations();
       setConversations(convs);
     } catch (err) {
+      let errorText = err.response?.data?.detail || err.message || 'Something went wrong.';
+      if (err.response?.status === 429) {
+        errorText = '⚠️ API quota exceeded. Please update your API keys in server/.env file.';
+      } else if (err.response?.status === 504) {
+        errorText = '⏱️ AI service timed out. Try switching to a different model.';
+      } else if (!err.response) {
+        errorText = '🔌 Cannot reach the backend server. Make sure it is running on port 8003.';
+      }
       const errorMsg = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: `❌ Error: ${err.response?.data?.detail || err.message || 'Something went wrong. Make sure the backend server is running.'}`,
+        content: errorText,
         timestamp: new Date().toISOString(),
       };
       setMessages((prev) => [...prev, errorMsg]);

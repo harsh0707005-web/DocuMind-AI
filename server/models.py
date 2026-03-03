@@ -20,6 +20,8 @@ class SourceChunk(BaseModel):
 
 
 class ChatResponse(BaseModel):
+    model_config = {"protected_namespaces": ()}
+
     reply: str
     conversation_id: str
     sources: List[SourceChunk] = []

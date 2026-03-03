@@ -38,7 +38,8 @@ export default function Header({ activeTab, setActiveTab, model, setModel, sideb
           onChange={(e) => setModel(e.target.value)}
         >
           <option value="gpt-4">⚡ GPT-4o Mini</option>
-          <option value="gemini">✨ Gemini 1.5 Flash</option>
+          <option value="gemini">✨ Gemini 2.0 Flash</option>
+          <option value="groq">🦙 Llama 3.3 70B (Groq)</option>
         </select>
       </div>
     </header>

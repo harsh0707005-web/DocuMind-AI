@@ -1,9 +1,11 @@
 """Configuration for DocuMind AI backend."""
 
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 
-load_dotenv()
+# Load .env from the same directory as this config file
+load_dotenv(Path(__file__).parent / ".env")
 
 
 class Settings:
@@ -17,6 +19,9 @@ class Settings:
     # Google Gemini
     GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
 
+    # Groq (free tier)
+    GROQ_API_KEY: str = os.getenv("GROQ_API_KEY", "")
+
     # App settings
     UPLOAD_DIR: str = os.path.join(os.path.dirname(__file__), "uploads")
     MAX_FILE_SIZE: int = 10 * 1024 * 1024  # 10MB
@@ -28,7 +33,7 @@ class Settings:
     TOP_K_RESULTS: int = 5
 
     # CORS
-    CORS_ORIGINS: list = ["http://localhost:5173", "http://localhost:3000"]
+    CORS_ORIGINS: list = ["http://localhost:5173", "http://localhost:5174", "http://localhost:5175", "http://localhost:3000", "*"]
 
 
 settings = Settings()
