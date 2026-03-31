@@ -1,30 +1,31 @@
-/* ========================================
-   DocuMind AI — Global Styles
-   ======================================== */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
-  --bg-primary: #0f0f23;
-  --bg-secondary: #1a1a2e;
-  --bg-tertiary: #16213e;
-  --bg-card: rgba(255, 255, 255, 0.03);
-  --bg-card-hover: rgba(255, 255, 255, 0.06);
-  --border: rgba(255, 255, 255, 0.08);
-  --border-active: rgba(99, 102, 241, 0.5);
-  --text-primary: #e2e8f0;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
-  --accent: #6366f1;
-  --accent-hover: #818cf8;
-  --accent-glow: rgba(99, 102, 241, 0.2);
-  --green: #10b981;
-  --red: #ef4444;
-  --yellow: #f59e0b;
-  --blue: #3b82f6;
-  --purple: #8b5cf6;
-  --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  --radius: 12px;
-  --radius-lg: 16px;
-  --shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+  --bg-primary: #07111f;
+  --bg-secondary: rgba(9, 18, 34, 0.82);
+  --bg-tertiary: rgba(17, 30, 55, 0.9);
+  --bg-card: rgba(255, 255, 255, 0.06);
+  --bg-card-strong: rgba(255, 255, 255, 0.1);
+  --bg-card-hover: rgba(255, 255, 255, 0.11);
+  --border: rgba(173, 226, 255, 0.14);
+  --border-active: rgba(79, 212, 255, 0.45);
+  --text-primary: #f5fbff;
+  --text-secondary: #b9c8db;
+  --text-muted: #7c93ab;
+  --accent: #4fd4ff;
+  --accent-strong: #14b8ff;
+  --accent-warm: #ff7a59;
+  --accent-lime: #b0ff76;
+  --accent-glow: rgba(79, 212, 255, 0.18);
+  --green: #76f7bc;
+  --red: #ff7a8a;
+  --font: 'Inter', sans-serif;
+  --font-display: 'Space Grotesk', sans-serif;
+  --radius: 18px;
+  --radius-lg: 28px;
+  --shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+  --pointer-x: 50%;
+  --pointer-y: 22%;
 }
 
 * {
@@ -33,42 +34,32 @@
   box-sizing: border-box;
 }
 
+html,
+body,
+#root {
+  height: 100%;
+}
+
 body {
   font-family: var(--font);
-  background: var(--bg-primary);
+  background:
+    radial-gradient(circle at top left, rgba(20, 184, 255, 0.18), transparent 28%),
+    radial-gradient(circle at 80% 20%, rgba(255, 122, 89, 0.15), transparent 24%),
+    linear-gradient(135deg, #050b14 0%, #091423 45%, #08121d 100%);
   color: var(--text-primary);
-  overflow: hidden;
-  height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
-#root {
-  height: 100vh;
-}
-
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
 }
 
 button {
   cursor: pointer;
-  font-family: var(--font);
-}
-
-input, textarea, select {
-  font-family: var(--font);
 }
 
 a {
@@ -76,39 +67,99 @@ a {
   color: inherit;
 }
 
-/* Animations */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(185, 200, 219, 0.22);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(185, 200, 219, 0.34);
+}
+
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes slideIn {
-  from { opacity: 0; transform: translateX(-20px); }
-  to { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(-18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(0.92);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -14px, 0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-140%);
+  }
+  100% {
+    transform: translateX(140%);
+  }
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    box-shadow: 0 0 0 rgba(79, 212, 255, 0);
+  }
+  50% {
+    box-shadow: 0 0 24px rgba(79, 212, 255, 0.18);
+  }
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.3s ease-out;
+  animation: fadeIn 0.35s ease-out;
 }
 
 .animate-slide-in {
-  animation: slideIn 0.3s ease-out;
-}
-
-.animate-pulse {
-  animation: pulse 1.5s ease-in-out infinite;
-}
-
-.spinner {
-  animation: spin 1s linear infinite;
+  animation: slideIn 0.35s ease-out;
 }

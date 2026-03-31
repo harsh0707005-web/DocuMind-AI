@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import Sidebar from './components/Sidebar';
 import ChatWindow from './components/ChatWindow';
 import DocumentUpload from './components/DocumentUpload';
@@ -14,9 +14,38 @@ function App() {
   const [model, setModel] = useState('gpt-4');
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [documents, setDocuments] = useState([]);
+  const [pointerGlow, setPointerGlow] = useState({ x: 50, y: 22 });
+
+  useEffect(() => {
+    const updatePointerGlow = (event) => {
+      const x = (event.clientX / window.innerWidth) * 100;
+      const y = (event.clientY / window.innerHeight) * 100;
+      setPointerGlow({ x, y });
+    };
+
+    window.addEventListener('pointermove', updatePointerGlow);
+
+    return () => {
+      window.removeEventListener('pointermove', updatePointerGlow);
+    };
+  }, []);
 
   return (
-    <div className="app">
+    <div
+      className="app"
+      style={{
+        '--pointer-x': `${pointerGlow.x}%`,
+        '--pointer-y': `${pointerGlow.y}%`,
+      }}
+    >
+      <div className="app-background" aria-hidden="true">
+        <div className="app-pointer-glow"></div>
+        <div className="app-orb orb-one"></div>
+        <div className="app-orb orb-two"></div>
+        <div className="app-orb orb-three"></div>
+        <div className="app-grid"></div>
+      </div>
+
       <Sidebar
         conversations={conversations}
         setConversations={setConversations}
@@ -24,8 +53,8 @@ function App() {
         setActiveConversation={setActiveConversation}
         setMessages={setMessages}
         sidebarOpen={sidebarOpen}
-        setSidebarOpen={setSidebarOpen}
       />
+
       <main className={`main-content ${sidebarOpen ? '' : 'sidebar-closed'}`}>
         <Header
           activeTab={activeTab}
@@ -34,7 +63,11 @@ function App() {
           setModel={setModel}
           sidebarOpen={sidebarOpen}
           setSidebarOpen={setSidebarOpen}
+          conversationCount={conversations.length}
+          documentCount={documents.length}
+          messageCount={messages.length}
         />
+
         <div className="content-area">
           {activeTab === 'chat' && (
             <ChatWindow
@@ -42,20 +75,14 @@ function App() {
               setMessages={setMessages}
               activeConversation={activeConversation}
               setActiveConversation={setActiveConversation}
-              conversations={conversations}
               setConversations={setConversations}
               model={model}
             />
           )}
           {activeTab === 'documents' && (
-            <DocumentUpload
-              documents={documents}
-              setDocuments={setDocuments}
-            />
+            <DocumentUpload documents={documents} setDocuments={setDocuments} />
           )}
-          {activeTab === 'study' && (
-            <StudyTools model={model} />
-          )}
+          {activeTab === 'study' && <StudyTools model={model} />}
         </div>
       </main>
     </div>

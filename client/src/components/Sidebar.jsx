@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
+import { ArrowRight, BrainCircuit, MessageSquareText, Plus, Trash2 } from 'lucide-react';
 import { getConversations, deleteConversation } from '../services/api';
 
 export default function Sidebar({
@@ -8,7 +9,6 @@ export default function Sidebar({
   setActiveConversation,
   setMessages,
   sidebarOpen,
-  setSidebarOpen,
 }) {
   useEffect(() => {
     loadConversations();
@@ -28,10 +28,6 @@ export default function Sidebar({
     setMessages([]);
   };
 
-  const handleSelectConversation = (conv) => {
-    setActiveConversation(conv.id);
-  };
-
   const handleDeleteConversation = async (e, convId) => {
     e.stopPropagation();
     try {
@@ -49,26 +45,41 @@ export default function Sidebar({
   return (
     <aside className={`sidebar ${sidebarOpen ? '' : 'closed'}`}>
       <div className="sidebar-header">
-        <div className="logo">D</div>
-        <h1>DocuMind AI</h1>
+        <div className="logo">
+          <BrainCircuit size={18} />
+        </div>
+        <div>
+          <div className="sidebar-kicker">Creative AI workspace</div>
+          <h1>DocuMind AI</h1>
+        </div>
+      </div>
+
+      <div className="sidebar-hero">
+        <p className="sidebar-hero-label">Atmospheric workspace</p>
+        <h2>Turn documents into conversation, structure, and recall.</h2>
+        <p className="sidebar-hero-copy">
+          A more immersive command deck for chatting with sources, curating files, and generating study assets.
+        </p>
       </div>
 
       <button className="new-chat-btn" onClick={handleNewChat}>
-        ✨ New Chat
+        <Plus size={16} />
+        New Orbit
       </button>
 
       <div className="conversations-list">
-        {conversations.length > 0 && (
-          <div className="conv-label">Recent Conversations</div>
-        )}
+        {conversations.length > 0 && <div className="conv-label">Conversation Dock</div>}
+
         {conversations.map((conv) => (
           <div
             key={conv.id}
             className={`conv-item ${activeConversation === conv.id ? 'active' : ''}`}
-            onClick={() => handleSelectConversation(conv)}
+            onClick={() => setActiveConversation(conv.id)}
           >
             <div className="conv-item-left">
-              <span className="conv-item-icon">💬</span>
+              <span className="conv-item-icon">
+                <MessageSquareText size={15} />
+              </span>
               <span className="conv-title">{conv.title}</span>
             </div>
             <button
@@ -76,13 +87,16 @@ export default function Sidebar({
               onClick={(e) => handleDeleteConversation(e, conv.id)}
               title="Delete conversation"
             >
-              🗑️
+              <Trash2 size={14} />
             </button>
           </div>
         ))}
+
         {conversations.length === 0 && (
-          <div style={{ padding: '20px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
-            No conversations yet.<br />Start a new chat!
+          <div className="sidebar-empty">
+            <p>No conversations saved yet.</p>
+            <span>Start a new orbit and your threads will appear here.</span>
+            <ArrowRight size={16} />
           </div>
         )}
       </div>

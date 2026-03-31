@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { FileArchive, FileText, FolderKanban, HardDriveUpload, ShieldCheck, Trash2 } from 'lucide-react';
 import { uploadDocument, getDocuments, deleteDocument, deleteAllDocuments } from '../services/api';
 
 export default function DocumentUpload({ documents, setDocuments }) {
@@ -35,11 +36,11 @@ export default function DocumentUpload({ documents, setDocuments }) {
 
     try {
       const result = await uploadDocument(file, setUploadProgress);
-      showAlert('success', `✅ "${file.name}" uploaded — ${result.chunks} chunks created`);
+      showAlert('success', `"${file.name}" uploaded. ${result.chunks} chunks created.`);
       await loadDocuments();
     } catch (err) {
       const msg = err.response?.data?.detail || 'Upload failed';
-      showAlert('error', `❌ ${msg}`);
+      showAlert('error', msg);
     } finally {
       setUploading(false);
       setUploadProgress(0);
@@ -69,7 +70,7 @@ export default function DocumentUpload({ documents, setDocuments }) {
   const handleDelete = async (docId, filename) => {
     try {
       await deleteDocument(docId);
-      showAlert('success', `🗑️ "${filename}" deleted`);
+      showAlert('success', `"${filename}" deleted.`);
       await loadDocuments();
     } catch (err) {
       showAlert('error', 'Failed to delete document');
@@ -80,7 +81,7 @@ export default function DocumentUpload({ documents, setDocuments }) {
     if (!window.confirm('Delete all documents? This cannot be undone.')) return;
     try {
       await deleteAllDocuments();
-      showAlert('success', '🗑️ All documents deleted');
+      showAlert('success', 'All documents deleted.');
       await loadDocuments();
     } catch (err) {
       showAlert('error', 'Failed to delete documents');
@@ -88,52 +89,60 @@ export default function DocumentUpload({ documents, setDocuments }) {
   };
 
   const formatSize = (bytes) => {
-    if (bytes < 1024) return bytes + ' B';
-    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   };
 
   const getFileIcon = (type) => {
     const icons = {
-      '.pdf': '📕',
-      '.txt': '📄',
-      '.md': '📝',
-      '.py': '🐍',
-      '.js': '🟡',
-      '.ts': '🔷',
-      '.java': '☕',
-      '.cpp': '⚙️',
-      '.csv': '📊',
+      '.pdf': 'PDF',
+      '.txt': 'TXT',
+      '.md': 'MD',
+      '.py': 'PY',
+      '.js': 'JS',
+      '.ts': 'TS',
+      '.java': 'JV',
+      '.cpp': 'C++',
+      '.csv': 'CSV',
     };
-    return icons[type] || '📄';
+    return icons[type] || 'FILE';
   };
 
   return (
     <div className="documents-container">
-      <h2>📄 Document Manager</h2>
-      <p>Upload your documents to enable RAG-powered Q&A. Supported: PDF, TXT, MD, Code files</p>
+      <div className="section-heading">
+        <div>
+          <p className="section-kicker">Document vault</p>
+          <h2>Build the knowledge layer behind every answer.</h2>
+          <p>Upload source material to power retrieval, citations, summaries, and study tools.</p>
+        </div>
+        <div className="section-chip">
+          <ShieldCheck size={16} />
+          Indexed for RAG
+        </div>
+      </div>
 
-      {alert && (
-        <div className={`alert ${alert.type}`}>{alert.message}</div>
-      )}
+      {alert && <div className={`alert ${alert.type}`}>{alert.message}</div>}
 
-      {/* Stats */}
       <div className="doc-stats">
         <div className="stat-card">
+          <FolderKanban size={18} />
           <div className="stat-value">{stats.total}</div>
           <div className="stat-label">Documents</div>
         </div>
         <div className="stat-card">
+          <FileArchive size={18} />
           <div className="stat-value">{stats.totalChunks}</div>
           <div className="stat-label">Chunks Indexed</div>
         </div>
         <div className="stat-card">
-          <div className="stat-value">{stats.totalChunks > 0 ? '✅' : '❌'}</div>
-          <div className="stat-label">RAG Ready</div>
+          <ShieldCheck size={18} />
+          <div className="stat-value">{stats.totalChunks > 0 ? 'LIVE' : 'IDLE'}</div>
+          <div className="stat-label">Retrieval State</div>
         </div>
       </div>
 
-      {/* Upload Zone */}
       <div
         className={`upload-zone ${dragOver ? 'drag-over' : ''}`}
         onDrop={handleDrop}
@@ -148,10 +157,14 @@ export default function DocumentUpload({ documents, setDocuments }) {
           accept=".pdf,.txt,.py,.js,.ts,.java,.cpp,.c,.md,.csv"
           onChange={handleFileInput}
         />
-        <div className="upload-icon">📤</div>
+
+        <div className="upload-icon">
+          <HardDriveUpload size={34} />
+        </div>
+
         {uploading ? (
           <>
-            <h3>Uploading & Processing...</h3>
+            <h3>Uploading and indexing your file...</h3>
             <div className="upload-progress">
               <div className="progress-bar">
                 <div className="progress-fill" style={{ width: `${uploadProgress}%` }}></div>
@@ -160,23 +173,19 @@ export default function DocumentUpload({ documents, setDocuments }) {
           </>
         ) : (
           <>
-            <h3>Drop a file here or click to upload</h3>
-            <p>PDF, TXT, Markdown, Python, JavaScript, Java, C++, CSV (Max 10MB)</p>
+            <h3>Drop a file here or click to stage it</h3>
+            <p>Supports PDF, TXT, Markdown, Python, JavaScript, Java, C++, and CSV up to 10MB.</p>
           </>
         )}
       </div>
 
-      {/* Document List */}
       {documents.length > 0 && (
         <>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-            <h3 className="doc-section-title">Uploaded Documents</h3>
-            <button
-              className="generate-btn"
-              onClick={handleDeleteAll}
-              style={{ background: 'var(--red)', fontSize: '0.8rem', padding: '6px 14px' }}
-            >
-              🗑️ Delete All
+          <div className="doc-toolbar">
+            <h3 className="doc-section-title">Indexed documents</h3>
+            <button className="generate-btn danger-btn" onClick={handleDeleteAll}>
+              <Trash2 size={14} />
+              Delete All
             </button>
           </div>
 
@@ -184,18 +193,25 @@ export default function DocumentUpload({ documents, setDocuments }) {
             {documents.map((doc) => (
               <div key={doc.id} className="doc-item animate-fade-in">
                 <div className="doc-item-left">
-                  <span className="doc-icon">{getFileIcon(doc.file_type)}</span>
+                  <span className="doc-icon">
+                    <FileText size={18} />
+                    <span className="doc-badge">{getFileIcon(doc.file_type)}</span>
+                  </span>
+
                   <div className="doc-info">
                     <h4>{doc.filename}</h4>
-                    <p>{formatSize(doc.size)} • {doc.chunks} chunks • {doc.uploaded_at?.split('T')[0]}</p>
+                    <p>
+                      {formatSize(doc.size)} • {doc.chunks} chunks • {doc.uploaded_at?.split('T')[0]}
+                    </p>
                   </div>
                 </div>
+
                 <button
                   className="doc-delete-btn"
                   onClick={() => handleDelete(doc.id, doc.filename)}
                   title="Delete document"
                 >
-                  🗑️
+                  <Trash2 size={15} />
                 </button>
               </div>
             ))}
