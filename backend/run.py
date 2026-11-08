@@ -1,15 +1,15 @@
-"""Startup script for DocuMind AI server with output logging."""
+"""Startup script for DocuMind AI backend with output logging."""
 import os
 import sys
 import logging
 
-# Ensure we're running from the server directory
-server_dir = os.path.dirname(os.path.abspath(__file__))
-os.chdir(server_dir)
-sys.path.insert(0, server_dir)
+# Ensure we're running from the backend directory
+backend_dir = os.path.dirname(os.path.abspath(__file__))
+os.chdir(backend_dir)
+sys.path.insert(0, backend_dir)
 
 # Set up file logging
-log_file = os.path.join(server_dir, "server.log")
+log_file = os.path.join(backend_dir, "server.log")
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -20,7 +20,7 @@ logging.basicConfig(
 )
 
 logger = logging.getLogger("startup")
-logger.info("Starting DocuMind AI server...")
+logger.info("Starting DocuMind AI backend...")
 
 try:
     import uvicorn

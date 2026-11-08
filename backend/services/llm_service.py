@@ -191,7 +191,7 @@ class LLMService:
         """Generate a basic extractive response when all APIs fail. No API key needed."""
         if not context:
             return {
-                "reply": "⚠️ **All AI providers are unavailable** (API quotas exhausted).\n\nTo fix this, you need at least one working API key:\n\n1. **Groq (FREE, recommended)**: Get a key at [console.groq.com/keys](https://console.groq.com/keys)\n2. **Gemini**: Get a key at [aistudio.google.com/apikey](https://aistudio.google.com/apikey)\n3. **OpenAI**: Get a key at [platform.openai.com/api-keys](https://platform.openai.com/api-keys)\n\nAdd the key to `server/.env` and restart the server.",
+                "reply": "⚠️ **All AI providers are unavailable** (API quotas exhausted).\n\nTo fix this, you need at least one working API key:\n\n1. **Groq (FREE, recommended)**: Get a key at [console.groq.com/keys](https://console.groq.com/keys)\n2. **Gemini**: Get a key at [aistudio.google.com/apikey](https://aistudio.google.com/apikey)\n3. **OpenAI**: Get a key at [platform.openai.com/api-keys](https://platform.openai.com/api-keys)\n\nAdd the key to `backend/.env` and restart the server.",
                 "tokens_used": None,
                 "model_used": "Offline (no API)"
             }
@@ -214,9 +214,9 @@ class LLMService:
             reply = "📄 **Extracted from your documents** (AI unavailable — showing relevant excerpts):\n\n"
             for i, sent in enumerate(top, 1):
                 reply += f"> {sent}\n\n"
-            reply += "\n---\n*⚠️ This is a text extraction, not an AI answer. Add a free Groq API key in `server/.env` for full AI responses.*"
+            reply += "\n---\n*⚠️ This is a text extraction, not an AI answer. Add a free Groq API key in `backend/.env` for full AI responses.*"
         else:
-            reply = f"📄 **Document excerpt** (AI unavailable):\n\n> {context[:500]}...\n\n---\n*⚠️ Add a free Groq API key in `server/.env` for AI-powered answers.*"
+            reply = f"📄 **Document excerpt** (AI unavailable):\n\n> {context[:500]}...\n\n---\n*⚠️ Add a free Groq API key in `backend/.env` for AI-powered answers.*"
 
         return {
             "reply": reply,
@@ -321,7 +321,7 @@ Return ONLY valid JSON in this exact format:
                     "correct": 0,
                     "explanation": f"The original text states: '{sent[:100]}...'"
                 })
-        return {"questions": questions if questions else [{"question": "No quiz could be generated (AI unavailable). Add a Groq API key to server/.env", "options": ["OK"], "correct": 0, "explanation": "Get a free key at console.groq.com/keys"}]}
+        return {"questions": questions if questions else [{"question": "No quiz could be generated (AI unavailable). Add a Groq API key to backend/.env", "options": ["OK"], "correct": 0, "explanation": "Get a free key at console.groq.com/keys"}]}
 
     async def generate_flashcards(self, context: str, num_cards: int = 10, model: str = "gpt-4") -> dict:
         """Generate flashcards from document context."""
@@ -367,7 +367,7 @@ Return ONLY valid JSON in this exact format:
                 "front": f"Key fact #{i+1} from your document:",
                 "back": sent[:200]
             })
-        return {"cards": cards if cards else [{"front": "AI unavailable", "back": "Add a free Groq API key to server/.env (console.groq.com/keys)"}]}
+        return {"cards": cards if cards else [{"front": "AI unavailable", "back": "Add a free Groq API key to backend/.env (console.groq.com/keys)"}]}
 
     async def generate_summary(self, context: str, model: str = "gpt-4") -> dict:
         """Generate a summary of document content."""
@@ -410,7 +410,7 @@ Return ONLY valid JSON in this exact format:
         key_points = sentences[3:8] if len(sentences) > 3 else sentences[:3]
         return {
             "summary": f"(Auto-extracted, AI unavailable) {summary}",
-            "key_points": key_points if key_points else ["Add a free Groq API key to server/.env for AI summaries"]
+            "key_points": key_points if key_points else ["Add a free Groq API key to backend/.env for AI summaries"]
         }
 
 

@@ -111,7 +111,7 @@ async def chat(request: ChatRequest):
     except Exception as e:
         error_str = str(e)
         if "429" in error_str or "quota" in error_str.lower():
-            raise HTTPException(status_code=429, detail="API quota exceeded. Please update your API keys in server/.env (OpenAI or Gemini).")
+            raise HTTPException(status_code=429, detail="API quota exceeded. Please update your API keys in backend/.env (OpenAI or Gemini).")
         elif "timeout" in error_str.lower() or "timed out" in error_str.lower():
             raise HTTPException(status_code=504, detail="AI service timed out. The API may be unreachable. Try switching models or check your API keys.")
         raise HTTPException(status_code=500, detail=str(e))

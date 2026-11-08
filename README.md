@@ -53,7 +53,7 @@ An intelligent, full-stack **Document Q&A Assistant** powered by **RAG (Retrieva
 
 ```
 DocuMind-AI/
-├── client/                    # React Frontend (Vite)
+├── frontend/                  # React Frontend (Vite)
 │   ├── src/
 │   │   ├── components/
 │   │   │   ├── ChatWindow.jsx    # RAG chat interface
@@ -69,7 +69,7 @@ DocuMind-AI/
 │   ├── package.json
 │   └── vite.config.js
 │
-├── server/                    # FastAPI Backend
+├── backend/                   # FastAPI Backend
 │   ├── main.py                # App entry point
 │   ├── config.py              # Environment configuration
 │   ├── database.py            # MongoDB connection
@@ -108,7 +108,7 @@ cd DocuMind-AI
 
 ### 2. Backend Setup
 ```bash
-cd server
+cd backend
 
 # Create virtual environment
 python -m venv venv
@@ -130,12 +130,12 @@ copy .env.example .env         # Windows
 # Start the server
 python main.py
 ```
-Backend runs at: `http://localhost:8000`
+Backend runs at: `http://localhost:8000` (or configured port)
 API docs at: `http://localhost:8000/docs`
 
 ### 3. Frontend Setup
 ```bash
-cd client
+cd frontend
 
 # Install dependencies
 npm install

@@ -77,7 +77,7 @@ export default function ChatWindow({
       let errorText = err.response?.data?.detail || err.message || 'Something went wrong.';
 
       if (err.response?.status === 429) {
-        errorText = 'API quota exceeded. Please update your API keys in server/.env file.';
+        errorText = 'API quota exceeded. Please update your API keys in backend/.env file.';
       } else if (err.response?.status === 504) {
         errorText = 'AI service timed out. Try switching to a different model.';
       } else if (!err.response) {

@@ -18,6 +18,7 @@ dist/
 # IDE
 .vscode/
 .idea/
+.codex/
 *.swp
 *.swo
 
@@ -27,13 +28,17 @@ Thumbs.db
 
 # Uploads & index files
 server/uploads/
+backend/uploads/
 
 # Local DB fallback
 server/local_db.json
+backend/local_db.json
 
 # Debug files
 server/debug_*.py
 server/debug_*.txt
+backend/debug_*.py
+backend/debug_*.txt
 server_output.txt
 -w
 
