@@ -130,8 +130,8 @@ copy .env.example .env         # Windows
 # Start the server
 python main.py
 ```
-Backend runs at: `http://localhost:8000` (or configured port)
-API docs at: `http://localhost:8000/docs`
+Backend runs at: `http://localhost:8003`
+API docs at: `http://localhost:8003/docs`
 
 ### 3. Frontend Setup
 ```bash
@@ -144,6 +144,12 @@ npm install
 npm run dev
 ```
 Frontend runs at: `http://localhost:5173`
+
+### Quick Start Both (Windows)
+Double-click `start.bat` or run:
+```cmd
+.\start.bat
+```
 
 ---
 
