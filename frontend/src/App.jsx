@@ -14,16 +14,25 @@ function App() {
   const [model, setModel] = useState('gpt-4');
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [documents, setDocuments] = useState([]);
-  const [pointerGlow, setPointerGlow] = useState({ x: 50, y: 22 });
 
+  // High-performance pointer glow using direct CSS variable updates via requestAnimationFrame
+  // Eliminates constant React re-renders on every mouse movement
   useEffect(() => {
+    let ticking = false;
     const updatePointerGlow = (event) => {
-      const x = (event.clientX / window.innerWidth) * 100;
-      const y = (event.clientY / window.innerHeight) * 100;
-      setPointerGlow({ x, y });
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const x = (event.clientX / window.innerWidth) * 100;
+          const y = (event.clientY / window.innerHeight) * 100;
+          document.documentElement.style.setProperty('--pointer-x', `${x.toFixed(1)}%`);
+          document.documentElement.style.setProperty('--pointer-y', `${y.toFixed(1)}%`);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
 
-    window.addEventListener('pointermove', updatePointerGlow);
+    window.addEventListener('pointermove', updatePointerGlow, { passive: true });
 
     return () => {
       window.removeEventListener('pointermove', updatePointerGlow);
@@ -31,13 +40,7 @@ function App() {
   }, []);
 
   return (
-    <div
-      className="app"
-      style={{
-        '--pointer-x': `${pointerGlow.x}%`,
-        '--pointer-y': `${pointerGlow.y}%`,
-      }}
-    >
+    <div className="app">
       <div className="app-background" aria-hidden="true">
         <div className="app-pointer-glow"></div>
         <div className="app-orb orb-one"></div>
@@ -53,6 +56,7 @@ function App() {
         setActiveConversation={setActiveConversation}
         setMessages={setMessages}
         sidebarOpen={sidebarOpen}
+        setModel={setModel}
       />
 
       <main className={`main-content ${sidebarOpen ? '' : 'sidebar-closed'}`}>
@@ -77,6 +81,7 @@ function App() {
               setActiveConversation={setActiveConversation}
               setConversations={setConversations}
               model={model}
+              setModel={setModel}
             />
           )}
           {activeTab === 'documents' && (

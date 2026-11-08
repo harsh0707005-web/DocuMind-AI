@@ -9,6 +9,7 @@ export default function Sidebar({
   setActiveConversation,
   setMessages,
   sidebarOpen,
+  setModel,
 }) {
   useEffect(() => {
     loadConversations();
@@ -26,6 +27,13 @@ export default function Sidebar({
   const handleNewChat = () => {
     setActiveConversation(null);
     setMessages([]);
+  };
+
+  const handleSelectConversation = (conv) => {
+    setActiveConversation(conv.id);
+    if (conv.model && setModel) {
+      setModel(conv.model);
+    }
   };
 
   const handleDeleteConversation = async (e, convId) => {
@@ -58,7 +66,7 @@ export default function Sidebar({
         <p className="sidebar-hero-label">Atmospheric workspace</p>
         <h2>Turn documents into conversation, structure, and recall.</h2>
         <p className="sidebar-hero-copy">
-          A more immersive command deck for chatting with sources, curating files, and generating study assets.
+          A fast command deck for chatting with sources, curating files, and generating study assets.
         </p>
       </div>
 
@@ -74,7 +82,7 @@ export default function Sidebar({
           <div
             key={conv.id}
             className={`conv-item ${activeConversation === conv.id ? 'active' : ''}`}
-            onClick={() => setActiveConversation(conv.id)}
+            onClick={() => handleSelectConversation(conv)}
           >
             <div className="conv-item-left">
               <span className="conv-item-icon">

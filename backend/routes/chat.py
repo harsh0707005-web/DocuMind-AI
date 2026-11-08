@@ -78,6 +78,7 @@ async def chat(request: ChatRequest):
             "role": "assistant",
             "content": result["reply"],
             "sources": result.get("sources", []),
+            "model_used": result.get("model_used"),
             "timestamp": datetime.utcnow().isoformat()
         }
         if is_local():
@@ -160,6 +161,7 @@ async def get_messages(conversation_id: str):
                 "role": msg["role"],
                 "content": msg["content"],
                 "sources": msg.get("sources", []),
+                "model_used": msg.get("model_used"),
                 "timestamp": msg["timestamp"]
             })
     else:
@@ -172,6 +174,7 @@ async def get_messages(conversation_id: str):
                 "role": msg["role"],
                 "content": msg["content"],
                 "sources": msg.get("sources", []),
+                "model_used": msg.get("model_used"),
                 "timestamp": msg["timestamp"]
             })
     return {"messages": messages}

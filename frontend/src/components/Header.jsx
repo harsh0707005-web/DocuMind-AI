@@ -30,14 +30,14 @@ export default function Header({
   ];
 
   const models = [
-    { id: 'gpt-4', label: 'GPT-4o Mini' },
-    { id: 'gemini', label: 'Gemini 2.0 Flash' },
-    { id: 'groq', label: 'Llama 3.3 70B' },
+    { id: 'gpt-4', label: 'GPT-4o Mini', provider: 'OpenAI', badge: '⚡' },
+    { id: 'gemini', label: 'Gemini 2.0 Flash', provider: 'Google', badge: '✦' },
+    { id: 'groq', label: 'Llama 3.3 70B', provider: 'Groq (Free)', badge: '🚀' },
   ];
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (!modelMenuRef.current?.contains(event.target)) {
+      if (modelMenuRef.current && !modelMenuRef.current.contains(event.target)) {
         setModelMenuOpen(false);
       }
     };
@@ -108,12 +108,16 @@ export default function Header({
           <button
             className="model-trigger"
             type="button"
-            onClick={() => setModelMenuOpen((prev) => !prev)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setModelMenuOpen((prev) => !prev);
+            }}
             aria-haspopup="listbox"
             aria-expanded={modelMenuOpen}
+            title="Click to switch AI Model"
           >
             <span className="model-trigger-left">
-              <Sparkles size={15} />
+              <span className="model-badge-icon">{activeModel.badge}</span>
               <span>{activeModel.label}</span>
             </span>
             <ChevronDown size={15} className={`model-chevron ${modelMenuOpen ? 'open' : ''}`} />
@@ -121,17 +125,23 @@ export default function Header({
 
           {modelMenuOpen && (
             <div className="model-menu" role="listbox" aria-label="Choose model">
+              <div className="model-menu-header">Select AI Engine</div>
               {models.map((item) => (
                 <button
                   key={item.id}
                   className={`model-menu-item ${item.id === model ? 'active' : ''}`}
                   type="button"
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.stopPropagation();
                     setModel(item.id);
                     setModelMenuOpen(false);
                   }}
                 >
-                  {item.label}
+                  <span className="model-item-main">
+                    <span className="model-item-badge">{item.badge}</span>
+                    <span className="model-item-label">{item.label}</span>
+                  </span>
+                  <span className="model-item-provider">{item.provider}</span>
                 </button>
               ))}
             </div>
