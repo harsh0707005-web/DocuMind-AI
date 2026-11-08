@@ -39,13 +39,13 @@ class LLMService:
         fallback_chain = []
 
         if model.startswith("gpt"):
-            fallback_chain = ["openai", "groq", "gemini", "offline"]
+            fallback_chain = ["openai", "gemini", "groq", "offline"]
         elif model == "gemini":
             fallback_chain = ["gemini", "groq", "openai", "offline"]
         elif model == "groq":
             fallback_chain = ["groq", "gemini", "openai", "offline"]
         else:
-            fallback_chain = ["groq", "gemini", "openai", "offline"]
+            fallback_chain = ["gemini", "groq", "openai", "offline"]
 
         last_error = None
         for provider in fallback_chain:
@@ -114,11 +114,9 @@ class LLMService:
     async def _call_gemini(
         self, prompt: str, context: str, system_prompt: str, chat_history: list
     ) -> dict:
-        """Call Google Gemini API."""
+        """Call Google Gemini API with fallback across active models."""
         if not settings.GEMINI_API_KEY:
             raise ValueError("Gemini API key not configured")
-
-        model = genai.GenerativeModel("gemini-2.0-flash")
 
         # Build the full prompt
         full_prompt = ""
@@ -136,24 +134,36 @@ class LLMService:
 
         full_prompt += f"User: {prompt}\nAssistant:"
 
-        response = await model.generate_content_async(
-            full_prompt,
-            generation_config=genai.types.GenerationConfig(
-                temperature=0.7,
-                max_output_tokens=2000
-            )
-        )
+        # Candidate models supported by Gemini API
+        candidate_models = ["gemini-2.5-flash", "gemini-flash-latest", "gemini-2.5-flash-lite"]
+        last_err = None
 
-        return {
-            "reply": response.text,
-            "tokens_used": None,
-            "model_used": "Gemini 2.0 Flash"
-        }
+        for model_id in candidate_models:
+            try:
+                model = genai.GenerativeModel(model_id)
+                response = await model.generate_content_async(
+                    full_prompt,
+                    generation_config=genai.types.GenerationConfig(
+                        temperature=0.7,
+                        max_output_tokens=2000
+                    )
+                )
+                return {
+                    "reply": response.text,
+                    "tokens_used": None,
+                    "model_used": "Gemini 2.5 Flash"
+                }
+            except Exception as e:
+                last_err = e
+                print(f"⚠️ Gemini {model_id} failed ({e}), trying next candidate...")
+                continue
+
+        raise last_err or ValueError("All Gemini model candidates failed")
 
     async def _call_groq(
         self, prompt: str, context: str, system_prompt: str, chat_history: list
     ) -> dict:
-        """Call Groq API (OpenAI-compatible, free tier with Llama 3.3 70B)."""
+        """Call Groq API (OpenAI-compatible, free tier)."""
         if not self.groq_client:
             raise ValueError("Groq API key not configured")
 
@@ -171,21 +181,37 @@ class LLMService:
 
         messages.append({"role": "user", "content": prompt})
 
-        response = await asyncio.wait_for(
-            self.groq_client.chat.completions.create(
-                model="llama-3.3-70b-versatile",
-                messages=messages,
-                temperature=0.7,
-                max_tokens=2000
-            ),
-            timeout=30
-        )
+        # Candidate models available on Groq
+        candidate_models = [
+            ("qwen/qwen3.8-27b", "Qwen 3.8 27B (Groq)"),
+            ("openai/gpt-oss-120b", "GPT-OSS 120B (Groq)"),
+            ("openai/gpt-oss-20b", "GPT-OSS 20B (Groq)"),
+            ("llama-3.3-70b-versatile", "Llama 3.3 70B (Groq)"),
+            ("llama-3.1-8b-instant", "Llama 3.1 8B (Groq)")
+        ]
+        last_err = None
 
-        return {
-            "reply": response.choices[0].message.content,
-            "tokens_used": response.usage.total_tokens if response.usage else None,
-            "model_used": "Llama 3.3 70B (Groq)"
-        }
+        for model_id, model_label in candidate_models:
+            try:
+                response = await asyncio.wait_for(
+                    self.groq_client.chat.completions.create(
+                        model=model_id,
+                        messages=messages,
+                        temperature=0.7,
+                        max_tokens=2000
+                    ),
+                    timeout=25
+                )
+                return {
+                    "reply": response.choices[0].message.content,
+                    "tokens_used": response.usage.total_tokens if response.usage else None,
+                    "model_used": model_label
+                }
+            except Exception as e:
+                last_err = e
+                continue
+
+        raise last_err or ValueError("All Groq model candidates failed")
 
     def _offline_response(self, prompt: str, context: str) -> dict:
         """Generate a basic extractive response when all APIs fail. No API key needed."""

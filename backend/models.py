@@ -9,7 +9,7 @@ from datetime import datetime
 class ChatRequest(BaseModel):
     message: str
     conversation_id: Optional[str] = None
-    model: str = "gpt-4"  # "gpt-4" or "gemini"
+    model: str = "gemini"  # "gemini", "groq", or "gpt-4"
     mode: str = "chat"  # "chat", "quiz", "summarize", "flashcard"
 
 

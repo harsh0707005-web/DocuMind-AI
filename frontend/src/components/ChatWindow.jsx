@@ -4,9 +4,9 @@ import { ArrowUpRight, AudioWaveform, BrainCircuit, Compass, Sparkles } from 'lu
 import { sendMessage, getMessages, getConversations } from '../services/api';
 
 const AVAILABLE_MODELS = [
-  { id: 'gpt-4', label: 'GPT-4o Mini', badge: '⚡ OpenAI', desc: 'Fast, sharp reasoning' },
-  { id: 'gemini', label: 'Gemini 2.0 Flash', badge: '✦ Google', desc: 'High-speed multi-modal' },
-  { id: 'groq', label: 'Llama 3.3 70B', badge: '🚀 Groq (Free)', desc: 'Ultra-fast open weights' },
+  { id: 'gemini', label: 'Gemini 2.5 Flash', badge: '✦ Google', desc: 'Ultra-fast, smart reasoning' },
+  { id: 'groq', label: 'Qwen 27B (Groq)', badge: '🚀 Groq (Free)', desc: 'High-speed open model' },
+  { id: 'gpt-4', label: 'GPT-4o Mini', badge: '⚡ OpenAI', desc: 'Requires OpenAI account credits' },
 ];
 
 // Memoized message item to prevent re-parsing markdown on every keystroke

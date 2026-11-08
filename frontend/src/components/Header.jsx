@@ -30,9 +30,9 @@ export default function Header({
   ];
 
   const models = [
+    { id: 'gemini', label: 'Gemini 2.5 Flash', provider: 'Google', badge: '✦' },
+    { id: 'groq', label: 'Qwen 27B (Groq)', provider: 'Groq', badge: '🚀' },
     { id: 'gpt-4', label: 'GPT-4o Mini', provider: 'OpenAI', badge: '⚡' },
-    { id: 'gemini', label: 'Gemini 2.0 Flash', provider: 'Google', badge: '✦' },
-    { id: 'groq', label: 'Llama 3.3 70B', provider: 'Groq (Free)', badge: '🚀' },
   ];
 
   useEffect(() => {
